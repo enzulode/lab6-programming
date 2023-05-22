@@ -1,0 +1,7 @@
+version = '1.0.0'
+group = 'com.enzulode.common'
+
+dependencies {
+    implementation project(':model')
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+}
