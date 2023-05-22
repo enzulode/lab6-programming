@@ -1,4 +1,4 @@
-## Lab6 Production
+## Lab6
 ```Andreev Vladislav```
 ##### Task id: ```31271```
 
