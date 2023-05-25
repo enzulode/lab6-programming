@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /** This data class contains coordinates information Is used in Ticket data class */
 @NoArgsConstructor(force = true)
@@ -17,7 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @EqualsAndHashCode
 @XmlRootElement(name = "coordinates")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Coordinates {
+public class Coordinates implements Serializable
+{
     /** This field contains X coordinate */
     @XmlElement(name = "xCoord", required = true)
     private final Float x;

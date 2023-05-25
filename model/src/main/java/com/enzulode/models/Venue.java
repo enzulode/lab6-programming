@@ -4,6 +4,7 @@ import com.enzulode.models.util.VenueType;
 import lombok.*;
 
 import javax.xml.bind.annotation.*;
+import java.io.Serializable;
 
 /** This data class contains venue information Is used in Ticket data class */
 @AllArgsConstructor
@@ -14,7 +15,8 @@ import javax.xml.bind.annotation.*;
 @EqualsAndHashCode
 @XmlRootElement(name = "venue")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Venue {
+public class Venue implements Serializable
+{
     /** This field contains unique venue id */
     @XmlAttribute(name = "venueId", required = true)
     private long id;

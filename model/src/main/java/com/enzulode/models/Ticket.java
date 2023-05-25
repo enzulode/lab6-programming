@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /** This data class contains ticket information Is stored in the database */
@@ -16,7 +17,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 @XmlRootElement(name = "ticket")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Ticket implements Comparable<Ticket> {
+public class Ticket implements Comparable<Ticket>, Serializable
+{
     /** This field contains unique ticket id */
     @Setter
     @XmlAttribute(name = "ticketId", required = true)
