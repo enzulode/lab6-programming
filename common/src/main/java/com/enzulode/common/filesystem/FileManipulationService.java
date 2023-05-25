@@ -66,6 +66,13 @@ public class FileManipulationService
         return file;
     }
 
+    /**
+     * This method reads all file lines and returns them as a list
+     *
+     * @param file file to fetch its lines
+     * @return a list of file lines
+     * @throws FileException if file doesn't have enough permissions to read or even doesn't exist
+     */
     public List<String> readFileLines(@NonNull File file) throws FileException
     {
 //      Check if file exists, and we are able to read from it
@@ -79,6 +86,31 @@ public class FileManipulationService
         catch (IOException e)
         {
             throw new FileException("Failed to open file", e);
+        }
+    }
+
+    /**
+     * This method creates a BufferedReader for a file by name
+     *
+     * @param filename the name of the file
+     * @return the reader instance
+     * @throws FileException if file doesn't have enough permissions to read or even doesn't exist
+     */
+    public BufferedReader getReaderByName(@NonNull String filename) throws FileException
+    {
+        File file = getFileByName(filename);
+
+//      Check is file ready to read
+        validateFileExists(file);
+        validateFileIsReadable(file);
+
+        try
+        {
+            return new BufferedReader(new FileReader(file));
+        }
+        catch (IOException e)
+        {
+            throw new FileException("Failed to create file reader", e);
         }
     }
 }
