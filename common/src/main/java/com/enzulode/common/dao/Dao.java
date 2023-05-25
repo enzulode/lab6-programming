@@ -120,4 +120,12 @@ public interface Dao<T>
      * @return list of filtered elements
      */
     List<T> findLessThanType(@NonNull TicketType type);
+
+    /**
+     * This method checks the id existence in the database
+     *
+     * @param id an id to be checked
+     * @return true if id exists
+     */
+    boolean checkIdExistence(int id);
 }
