@@ -13,3 +13,6 @@ build
 
 # Ignore local.properties file with secrets
 local.properties
+
+# Ignoring testing scripts
+*.s
