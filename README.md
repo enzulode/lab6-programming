@@ -9,7 +9,27 @@
 This application is a client-server collection management system. This project is made in educational purposes.
 
 ## Building
-```Coming soon...```
+To build executable ```jar``` files you have to do the following
+```shell
+./gradlew clean build
+```
 
 ## Usage
-```Coming soon```
+First of all, you have to build the application (check the previous block)
+
+### How to run ```server```
+Add the ```SAVING_FILE``` environment variable
+```shell
+export SAVING_FILE=<whatever saving file you want>
+```
+
+And then run
+```shell
+java -jar server/build/libs/server-<version>.jar
+```
+
+### How to run ```client```
+Just run the following
+```shell
+java -jar client/build/libs/client-<version>.jar
+```
