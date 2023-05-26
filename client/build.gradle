@@ -1,0 +1,21 @@
+version = '1.1.0'
+group = 'com.enzulode.client'
+
+dependencies {
+    implementation project(':common')
+    implementation project(':model')
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.enzulode.client.Client'
+    }
+
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}
