@@ -103,7 +103,6 @@ public class Server
 				if (cliReader.ready())
 				{
 					Command<Ticket> command = resolutionService.resolveCommand(cliReader.readLine());
-//					TODO: implement command execution (command source: server console)
 					LOGGER.info("Got command from server console: " + command.getClass().getSimpleName());
 					LOGGER.info(executionService.execute(command).getMessage());
 				}
