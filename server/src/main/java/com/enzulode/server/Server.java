@@ -1,6 +1,9 @@
 package com.enzulode.server;
 
 import com.enzulode.common.command.Command;
+import com.enzulode.common.command.impl.ExitCommand;
+import com.enzulode.common.command.impl.SaveCommand;
+import com.enzulode.common.dao.exception.DaoException;
 import com.enzulode.common.execution.ExecutionService;
 import com.enzulode.common.network.request.CommandRequest;
 import com.enzulode.common.network.request.IdRequest;
@@ -15,6 +18,7 @@ import com.enzulode.network.model.interconnection.util.ResponseCode;
 import com.enzulode.server.dao.TicketDaoImpl;
 import com.enzulode.server.database.TicketDatabaseImpl;
 import com.enzulode.server.database.exception.DatabaseException;
+import com.enzulode.server.database.exception.DatabaseLoadingFailedException;
 import com.enzulode.server.execution.ExecutionServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +49,11 @@ public class Server
 			database.load();
 			LOGGER.info("Database loading succeed");
 		}
+		catch (DatabaseLoadingFailedException e)
+		{
+			LOGGER.error("File does not exist", e);
+			System.exit(0);
+		}
 		catch (DatabaseException e)
 		{
 			LOGGER.warn("Failed to load the database. Initializing an empty database", e);
@@ -64,6 +73,16 @@ public class Server
 	    Signal.handle(new Signal("INT"), (signal) -> {
 			LOGGER.info("Caught an interruption signal: CTRL + C was pressed");
 			LOGGER.info("Server application shutdown initiated");
+
+			try
+			{
+				dao.save();
+				LOGGER.info("The database was saved");
+			}
+			catch (DaoException e)
+			{
+				LOGGER.error("Failed to save the database before server termination", e);
+			}
 			System.exit(0);
 	    });
 
@@ -95,27 +114,40 @@ public class Server
 			return null;
 		});
 
-		while (true)
-		{
-//			Resolving commands from the server cli
-			try
+		//			Resolving commands from the server cli
+		Thread uiThread = new Thread(() -> {
+			while (true)
 			{
-				if (cliReader.ready())
+				try
 				{
-					Command<Ticket> command = resolutionService.resolveCommand(cliReader.readLine());
-					LOGGER.info("Got command from server console: " + command.getClass().getSimpleName());
-					LOGGER.info(executionService.execute(command).getMessage());
+					if (cliReader.ready())
+					{
+						Command<Ticket> command = resolutionService.resolveCommand(cliReader.readLine());
+						if (!(command instanceof SaveCommand || command instanceof ExitCommand))
+						{
+							LOGGER.warn("This command is not supported on the server side");
+							continue;
+						}
+
+						LOGGER.info("Got command from server console: " + command.getClass().getSimpleName());
+						LOGGER.info(executionService.execute(command).getMessage());
+					}
+				}
+				catch (CommandResolutionException e)
+				{
+					LOGGER.warn("Such command does not exist");
+				}
+				catch (IOException e)
+				{
+					LOGGER.error("Something went wrong with stdin on the server side", e);
 				}
 			}
-			catch (CommandResolutionException e)
-			{
-				LOGGER.warn("Such command does not exist");
-			}
-			catch (IOException e)
-			{
-				LOGGER.error("Something went wrong with stdin on the server side", e);
-			}
+		});
+		uiThread.setName(" Server UI Thread");
+		uiThread.start();
 
+		while (true)
+		{
 //			Handling the request
 			try
 			{
