@@ -17,6 +17,7 @@ import com.enzulode.common.resolution.ResolutionService;
 import com.enzulode.models.Ticket;
 import com.enzulode.network.UDPChannelClient;
 import com.enzulode.network.exception.NetworkException;
+import com.enzulode.network.exception.ServerNotAvailableException;
 import com.enzulode.network.model.interconnection.util.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import sun.misc.Signal;
@@ -126,6 +127,10 @@ public class Console
 
 					printer.println(response.getResult().getMessage());
 	            }
+				catch (ServerNotAvailableException e)
+				{
+					printer.println("Failed: " + e.getMessage());
+				}
 				catch (Exception e)
 				{
 	                printer.println(e.getMessage());
