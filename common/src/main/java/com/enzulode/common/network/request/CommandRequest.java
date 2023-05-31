@@ -7,15 +7,22 @@ import com.enzulode.network.model.interconnection.Request;
 import lombok.Getter;
 import lombok.NonNull;
 
+import java.io.Serial;
 import java.net.InetSocketAddress;
 
 /**
- * This class represents simple command request
+ * This class represents command request
  *
  */
 @Getter
 public class CommandRequest extends Request
 {
+	/**
+	 * Serial version UID
+	 *
+	 */
+	@Serial
+	private static final long serialVersionUID = 8700465110700560527L;
 	/**
 	 * SimpleTicketCommand instance
 	 *
