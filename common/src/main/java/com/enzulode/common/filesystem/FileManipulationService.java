@@ -1,6 +1,7 @@
 package com.enzulode.common.filesystem;
 
 import com.enzulode.common.filesystem.exception.FileException;
+import com.enzulode.common.filesystem.exception.FileNotExistsException;
 import lombok.NonNull;
 
 import java.io.BufferedReader;
@@ -41,11 +42,11 @@ public class FileManipulationService
      * This method validates file to exist
      *
      * @param file file for validation
-     * @throws FileException if file does not exist
+     * @throws FileNotExistsException if file does not exist
      */
-    public void validateFileExists(@NonNull File file) throws FileException
+    public void validateFileExists(@NonNull File file) throws FileNotExistsException
     {
-        if (!file.exists()) throw new FileException("Specified file does not exists");
+        if (!file.exists()) throw new FileNotExistsException("Specified file does not exists");
     }
 
     /**
