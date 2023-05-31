@@ -4,6 +4,8 @@ import com.enzulode.network.model.interconnection.Response;
 import com.enzulode.network.model.interconnection.util.ResponseCode;
 import lombok.Getter;
 
+import java.io.Serial;
+
 /**
  * The response code represents id existence
  *
@@ -11,7 +13,19 @@ import lombok.Getter;
 @Getter
 public class IdResponse extends Response
 {
+	/**
+	 * Serial version UID
+	 *
+	 */
+	@Serial
+	private static final long serialVersionUID = 5301898658957513399L;
+
+	/**
+	 * Response message
+	 *
+	 */
 	private final String message;
+
 	/**
 	 * Response constructor without source and destination address provided
 	 *
