@@ -2,6 +2,7 @@ package com.enzulode.server.database;
 
 import com.enzulode.common.filesystem.FileManipulationService;
 import com.enzulode.common.filesystem.exception.FileException;
+import com.enzulode.common.filesystem.exception.FileNotExistsException;
 import com.enzulode.models.Coordinates;
 import com.enzulode.models.Ticket;
 import com.enzulode.models.Venue;
@@ -9,6 +10,7 @@ import com.enzulode.models.util.LocalDateTimeAdapter;
 import com.enzulode.models.util.TicketType;
 import com.enzulode.models.util.VenueType;
 import com.enzulode.server.database.exception.DatabaseException;
+import com.enzulode.server.database.exception.DatabaseLoadingFailedException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -295,6 +297,10 @@ public class TicketDatabaseImpl implements Database<Ticket>
 			fms.validateFileIsReadable(savingLoadingFile);
 			savingService.load(savingLoadingFile, this);
 	    }
+        catch (FileNotExistsException e)
+        {
+            throw new DatabaseLoadingFailedException("Failed to load the database", e);
+        }
 		catch (FileException e)
 		{
 			throw new DatabaseException("File validation not succeed", e);
