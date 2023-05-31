@@ -19,6 +19,6 @@ public class ExitCommand extends SimpleTicketCommand
 	public ExecutionResult execute()
 	{
 		System.exit(0);
-		return new ExecutionResult(ExecutionStatus.SUCCEED, "Terminating current connection side");
+		return new ExecutionResult(ExecutionStatus.SUCCEED, "Terminating current side");
 	}
 }
