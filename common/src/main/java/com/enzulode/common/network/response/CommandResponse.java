@@ -6,6 +6,7 @@ import com.enzulode.network.model.interconnection.util.ResponseCode;
 import lombok.Getter;
 import lombok.NonNull;
 
+import java.io.Serial;
 import java.net.InetSocketAddress;
 
 /**
@@ -16,6 +17,12 @@ import java.net.InetSocketAddress;
 public final class CommandResponse extends Response
 {
 
+	/**
+	 * Serial version UID
+	 *
+	 */
+	@Serial
+	private static final long serialVersionUID = -1065876023989594121L;
 	/**
 	 * Command execution result
 	 *
