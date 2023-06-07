@@ -1,8 +1,5 @@
 package com.enzulode.server;
 
-import com.enzulode.common.command.Command;
-import com.enzulode.common.command.impl.ExitCommand;
-import com.enzulode.common.command.impl.SaveCommand;
 import com.enzulode.common.dao.exception.DaoException;
 import com.enzulode.common.execution.ExecutionService;
 import com.enzulode.common.network.request.CommandRequest;
@@ -10,7 +7,6 @@ import com.enzulode.common.network.request.IdRequest;
 import com.enzulode.common.network.response.CommandResponse;
 import com.enzulode.common.network.response.IdResponse;
 import com.enzulode.common.resolution.ResolutionServiceImpl;
-import com.enzulode.common.resolution.exception.CommandResolutionException;
 import com.enzulode.models.Ticket;
 import com.enzulode.network.UDPSocketServer;
 import com.enzulode.network.exception.NetworkException;
@@ -20,6 +16,7 @@ import com.enzulode.server.database.TicketDatabaseImpl;
 import com.enzulode.server.database.exception.DatabaseException;
 import com.enzulode.server.database.exception.DatabaseLoadingFailedException;
 import com.enzulode.server.execution.ExecutionServiceImpl;
+import com.enzulode.server.ui.ServerUIThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -28,7 +25,6 @@ import org.springframework.context.ApplicationContext;
 import sun.misc.Signal;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 
 @SpringBootApplication
@@ -83,11 +79,14 @@ public class Server
 			{
 				LOGGER.error("Failed to save the database before server termination", e);
 			}
-			System.exit(0);
+			finally
+			{
+				System.exit(0);
+			}
 	    });
 
 //		Adding request handler
-		server.addRequestHandler((request) -> {
+		server.subscribe((request) -> {
 
 			if (request instanceof CommandRequest req)
 			{
@@ -114,49 +113,17 @@ public class Server
 			return null;
 		});
 
-		//			Resolving commands from the server cli
-		Thread uiThread = new Thread(() -> {
-			while (true)
-			{
-				try
-				{
-					if (cliReader.ready())
-					{
-						Command<Ticket> command = resolutionService.resolveCommand(cliReader.readLine());
-						if (!(command instanceof SaveCommand || command instanceof ExitCommand))
-						{
-							LOGGER.warn("This command is not supported on the server side");
-							continue;
-						}
+//		Starting server ui thread
+		(new ServerUIThread(cliReader, resolutionService, executionService, LOGGER)).start();
 
-						LOGGER.info("Got command from server console: " + command.getClass().getSimpleName());
-						LOGGER.info(executionService.execute(command).getMessage());
-					}
-				}
-				catch (CommandResolutionException e)
-				{
-					LOGGER.warn("Such command does not exist");
-				}
-				catch (IOException e)
-				{
-					LOGGER.error("Something went wrong with stdin on the server side", e);
-				}
-			}
-		});
-		uiThread.setName(" Server UI Thread");
-		uiThread.start();
-
-		while (true)
+//		Handling the request
+		try
 		{
-//			Handling the request
-			try
-			{
-				server.handleRequest();
-			}
-			catch (NetworkException e)
-			{
-				LOGGER.error("Failed to process request", e);
-			}
+			server.handleIncomingRequests();
+		}
+		catch (NetworkException e)
+		{
+			LOGGER.error("Failed to process request", e);
 		}
 	}
 }
