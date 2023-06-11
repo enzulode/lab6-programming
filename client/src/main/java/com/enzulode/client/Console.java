@@ -1,6 +1,6 @@
 package com.enzulode.client;
 
-import com.enzulode.client.parser.cli.TicketCLIParser;
+import com.enzulode.client.parser.cli.CLIParser;
 import com.enzulode.client.util.Printer;
 import com.enzulode.common.command.Command;
 import com.enzulode.common.command.ElementTicketCommand;
@@ -53,7 +53,7 @@ public class Console
 	 * Ticket CLI parser
 	 *
 	 */
-	private final TicketCLIParser cliParser;
+	private final CLIParser<Ticket> cliParser;
 
     /**
      * Application initialisation method
@@ -120,7 +120,7 @@ public class Console
 					}
 
 		            if (command instanceof ElementTicketCommand cmd)
-						cmd.setElement(cliParser.parseTicket());
+						cmd.setElement(cliParser.parse());
 
 					CommandRequest request = new CommandRequest(command);
 					CommandResponse response = client.sendRequestAndWaitResponse(request);
