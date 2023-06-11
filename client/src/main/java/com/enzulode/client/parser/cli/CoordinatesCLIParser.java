@@ -1,12 +1,11 @@
 package com.enzulode.client.parser.cli;
 
-import com.enzulode.common.parser.ParserMode;
 import com.enzulode.client.parser.exception.UserInterruptionException;
 import com.enzulode.client.util.Printer;
+import com.enzulode.common.parser.ParserMode;
 import com.enzulode.common.validation.CoordinatesValidator;
 import com.enzulode.models.Coordinates;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.NonNull;
 
 import java.util.Scanner;
 
@@ -14,39 +13,17 @@ import java.util.Scanner;
  * Provides an ability to parse coordinates object from console
  *
  */
-@RequiredArgsConstructor
-public class CoordinatesCLIParser
+public final class CoordinatesCLIParser extends CLIParser<Coordinates>
 {
     /**
-     * Printer instance
+     * Coordinates cli parser constructor
      *
+     * @param printer printer instance
+     * @param scanner scanner instance
      */
-    private final Printer printer;
-
-    /**
-     * Scanner instance
-     *
-     */
-    private final Scanner scanner;
-
-    /**
-     * Parser resolving mode
-     *
-     */
-    @Setter
-    private ParserMode mode;
-
-    /**
-     * Offers an ability to interrupt data input
-     *
-     * @throws UserInterruptionException if got not y/Y from user
-     */
-    private void proposeContinue() throws UserInterruptionException
+    public CoordinatesCLIParser(@NonNull Printer printer, @NonNull Scanner scanner)
     {
-        printer.print("Do you want to continue? [y/Y - for yes, other - for no]: ");
-        String userInput = scanner.nextLine().trim();
-        if (!"Y".equalsIgnoreCase(userInput))
-            throw new UserInterruptionException("Data input successfully interrupted");
+        super(printer, scanner);
     }
 
     /**
@@ -153,7 +130,7 @@ public class CoordinatesCLIParser
      * @return instance of coordinates
      * @throws UserInterruptionException if input stream ended or process interrupted by user
      */
-    public Coordinates parseCoordinates() throws UserInterruptionException
+    public Coordinates parse() throws UserInterruptionException
     {
         printer.println("#### ENTERING COORDINATES ####");
         Float x = parseXCoord();
