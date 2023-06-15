@@ -5,36 +5,38 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
-/** This data class contains coordinates information Is used in Ticket data class */
+/**
+ * This data class contains coordinates information Is used in Ticket data class
+ *
+ */
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @Getter
 @EqualsAndHashCode
-@XmlRootElement(name = "coordinates")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Coordinates implements Serializable
 {
-    /** This field contains X coordinate */
-    @XmlElement(name = "xCoord", required = true)
-    private final Float x;
+	/**
+	 * This field contains X coordinate
+	 *
+	 */
+	private final Float x;
 
-    /** This field contains Y coordinate */
-    @XmlElement(name = "yCoord", required = true)
-    private final Integer y;
+	/**
+	 * This field contains Y coordinate
+	 *
+	 */
+	private final Integer y;
 
-    /**
-     * This method provides access to a string representation of coordinates class object
-     *
-     * @return coordinates string representation
-     */
-    @Override
-    public String toString() {
-        return String.format("Coordinates: [x: %f, y: %d]", x, y);
-    }
+	/**
+	 * This method provides access to a string representation of coordinates class object
+	 *
+	 * @return coordinates string representation
+	 */
+	@Override
+	public String toString()
+	{
+		return String.format("Coordinates: [x: %f, y: %d]", x, y);
+	}
 }
