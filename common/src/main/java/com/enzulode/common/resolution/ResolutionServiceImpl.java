@@ -12,6 +12,7 @@ import com.enzulode.common.validation.TicketValidator;
 import com.enzulode.common.validation.exception.ValidationException;
 import com.enzulode.models.Ticket;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.io.BufferedReader;
 import java.util.ArrayList;
@@ -19,8 +20,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+@RequiredArgsConstructor
 public class ResolutionServiceImpl implements ResolutionService
 {
+	/**
+	 * Command factory instance
+	 *
+	 */
+	private final CommandFactory<Ticket> commandFactory;
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends Command<Ticket>> T resolveCommand(@NonNull String commandLine) throws CommandResolutionException
@@ -28,8 +36,7 @@ public class ResolutionServiceImpl implements ResolutionService
 		String[] splittedCommand = commandLine.strip().split(" ");
 		List<String> args = Arrays.asList(Arrays.copyOfRange(splittedCommand, 1, splittedCommand.length));
 
-
-		Command<Ticket> command = CommandFactory.getCommand(splittedCommand[0], args);
+		Command<Ticket> command = commandFactory.getCommand(splittedCommand[0], args);
 
 		if (command.getArgsExpected() != command.getArgs().size())
 			throw new CommandResolutionException("Invalid amount of arguments");
