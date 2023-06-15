@@ -11,7 +11,7 @@ import java.util.List;
  * An abstraction for application data access object
  *
  */
-public interface Dao extends CrudDAO<Ticket>
+public interface TicketDao extends CrudDAO<Ticket>
 {
 	/**
 	 * This is an abstraction for method that removes the first element from the database
