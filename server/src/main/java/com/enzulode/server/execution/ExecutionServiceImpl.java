@@ -4,7 +4,7 @@ import com.enzulode.common.command.Command;
 import com.enzulode.common.command.impl.ExecuteScriptCommand;
 import com.enzulode.common.command.util.ExecutionResult;
 import com.enzulode.common.command.util.ExecutionStatus;
-import com.enzulode.common.dao.Dao;
+import com.enzulode.common.dao.TicketDao;
 import com.enzulode.common.execution.ExecutionService;
 import com.enzulode.common.filesystem.FileManipulationService;
 import com.enzulode.models.Ticket;
@@ -31,7 +31,7 @@ public class ExecutionServiceImpl implements ExecutionService<Ticket>
 	 * Dao instance
 	 *
 	 */
-	private final Dao<Ticket> dao;
+	private final TicketDao ticketDao;
 
 	/**
 	 * FileManipulationService instance
@@ -48,7 +48,7 @@ public class ExecutionServiceImpl implements ExecutionService<Ticket>
 	@Override
 	public ExecutionResult execute(Command<Ticket> command)
 	{
-		command.setDao(dao);
+		command.setTicketDao(ticketDao);
 
 		if (command instanceof ExecuteScriptCommand)
 		{
@@ -79,7 +79,7 @@ public class ExecutionServiceImpl implements ExecutionService<Ticket>
 
 		for (Command<Ticket> command : commands)
 		{
-			command.setDao(dao);
+			command.setTicketDao(ticketDao);
 
 			if (command instanceof ExecuteScriptCommand)
 			{
