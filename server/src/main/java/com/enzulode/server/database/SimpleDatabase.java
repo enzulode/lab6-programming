@@ -45,5 +45,5 @@ public interface SimpleDatabase<T>
 	 *
 	 * @return a list of stored elements
 	 */
-	List<T> findAll();
+	List<T> findAll() throws DatabaseException;
 }
