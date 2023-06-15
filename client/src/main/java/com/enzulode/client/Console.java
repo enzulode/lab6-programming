@@ -5,7 +5,6 @@ import com.enzulode.client.util.Printer;
 import com.enzulode.common.command.Command;
 import com.enzulode.common.command.ElementTicketCommand;
 import com.enzulode.common.command.impl.ExitCommand;
-import com.enzulode.common.command.impl.SaveCommand;
 import com.enzulode.common.command.impl.UpdateCommand;
 import com.enzulode.common.network.request.CommandRequest;
 import com.enzulode.common.network.request.IdRequest;
@@ -95,12 +94,6 @@ public class Console
 					{
 						printer.println("Exit command detected: terminating current client");
 						System.exit(0);
-					}
-
-					if (command instanceof SaveCommand)
-					{
-						printer.println("This command is not allowed from the client side");
-						continue;
 					}
 
 					if (command instanceof UpdateCommand cmd)
