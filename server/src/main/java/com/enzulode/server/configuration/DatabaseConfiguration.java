@@ -1,26 +1,21 @@
 package com.enzulode.server.configuration;
 
-import com.enzulode.common.filesystem.FileManipulationService;
-import com.enzulode.database.DatabaseConnectionPool;
-import com.enzulode.database.exception.DatabaseConnectionPoolException;
-import com.enzulode.database.util.DatabaseConfig;
-import com.enzulode.server.dao.TicketDaoImpl;
+import com.enzulode.common.dao.TicketDao;
+import com.enzulode.models.Ticket;
+import com.enzulode.server.dao.TicketDAOImpl;
 import com.enzulode.server.database.TicketDatabaseImpl;
-import com.enzulode.server.database.TicketDatabaseSavingService;
-import com.enzulode.server.util.EnvUtil;
+import com.enzulode.server.database.TicketDatabase;
+import com.enzulode.server.database.connection.DatabaseConnectionManager;
+import com.enzulode.server.database.connection.HikariCPDatabaseConnectionManagerImpl;
+import com.enzulode.server.database.exception.DatabaseException;
+import com.enzulode.server.database.loading.LoadingService;
+import com.enzulode.server.database.loading.TicketDatabaseLoadingService;
+import com.enzulode.server.database.properties.FileDatabasePropertyProviderImpl;
+import com.enzulode.server.database.properties.exception.DatabasePropertyException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Properties;
 
 /**
  * Database layer configuration
@@ -30,90 +25,71 @@ import java.util.Properties;
 @Slf4j
 public class DatabaseConfiguration
 {
-
 	/**
-	 * Database configuration bean
+	 * Database connection manager bean declaration
 	 *
-	 * @param host database host
-	 * @param port database port
-	 * @param database database name
-	 * @param schema database schema
-	 * @param autocommit database autocommit status
-	 * @return database config instance
+	 * @return database connection manager instance
 	 */
-	@Bean(name = "databaseConfig")
-	public DatabaseConfig databaseConfigBean(
-			@Value("${settings.db.host}") String host,
-			@Value("${settings.db.port}") int port,
-			@Value("${settings.db.database}") String database,
-			@Value("${settings.db.schema}") String schema,
-			@Value("${settings.db.autocommit}") boolean autocommit
-	)
+	@Bean(name = "databaseConnectionManager")
+	public DatabaseConnectionManager databaseConnectionManagerBean()
 	{
 		try
 		{
-			Properties properties = new Properties();
-			properties.load(new BufferedReader(new FileReader("local.properties")));
-			String username = properties.getProperty("db.username");
-			String password = properties.getProperty("db.password");
+			var dpp = new FileDatabasePropertyProviderImpl("local.properties");
+			var props = dpp.provide();
 
-			return new DatabaseConfig(host, port, username, password, database, schema, autocommit);
+			return new HikariCPDatabaseConnectionManagerImpl(props);
 		}
-		catch (IOException e)
+		catch (DatabasePropertyException e)
 		{
-			log.error("Failed to load properties from the local.properties file", e);
-			throw new BeanCreationException(
-					"databaseConfigBean",
-					"Failed to load properties from the local.properties file",
-					e
-			);
+			throw new BeanCreationException("databaseConnectionManager", "Failed to load database props", e);
 		}
 	}
 
 	/**
-	 * Database connection pool bean
+	 * Database loading service bean declaration
 	 *
-	 * @param config database configuration
-	 * @return database connection pool instance
+	 * @param connectionManager database connection manager instance
+	 * @return database loading service instance
 	 */
-	@Bean(name = "databaseConnectionPool")
-	public DatabaseConnectionPool databaseConnectionPoolBean(DatabaseConfig config)
+	@Bean(name = "loadingService")
+	public LoadingService<Ticket> loadingServiceBean(DatabaseConnectionManager connectionManager)
 	{
-		try
-		{
-			return new DatabaseConnectionPool(config);
-		}
-		catch (DatabaseConnectionPoolException e)
-		{
-			log.error("Failed to init a connection pool");
-			throw new BeanCreationException("databaseConnectionPool", "Failed to init a connection pool", e);
-		}
+		return new TicketDatabaseLoadingService(connectionManager);
 	}
 
-	@Bean(name = "ticketDatabaseSavingService")
-	public TicketDatabaseSavingService ticketDatabaseSavingServiceBean(
-			FileManipulationService fms,
-			Marshaller xmlMarshaller,
-			Unmarshaller xmlUnmarshaller
-	)
-	{
-		return new TicketDatabaseSavingService(fms, xmlMarshaller, xmlUnmarshaller);
-	}
-
+	/**
+	 * Ticket database bean declaration
+	 *
+	 * @param connectionManager database connection manager instance
+	 * @param loadingService database loading service instance
+	 * @return ticket database instance
+	 */
 	@Bean(name = "ticketDatabase")
-	public TicketDatabaseImpl ticketDatabaseBean(
-			TicketDatabaseSavingService savingService,
-			FileManipulationService fms,
-			@Value("${settings.variable.name}") String envVariableName
+	public TicketDatabase ticketDatabaseBean(
+			DatabaseConnectionManager connectionManager,
+			LoadingService<Ticket> loadingService
 	)
 	{
-		File file = EnvUtil.retrieveFileFromEnv(envVariableName);
-		return new TicketDatabaseImpl(savingService, fms, file);
+		try
+		{
+			return new TicketDatabaseImpl(connectionManager, loadingService);
+		}
+		catch (DatabaseException e)
+		{
+			throw new BeanCreationException("normalTicketDatabase", "Failed to create bean", e);
+		}
 	}
 
-	@Bean(name = "ticketDaoImpl")
-	public TicketDaoImpl ticketDaoImplBean(TicketDatabaseImpl database)
+	/**
+	 * Ticket dao bean declaration
+	 *
+	 * @param database ticket database instance
+	 * @return ticket dao instance
+	 */
+	@Bean(name = "ticketDao")
+	public TicketDao ticketDaoBean(TicketDatabase database)
 	{
-		return new TicketDaoImpl(database);
+		return new TicketDAOImpl(database);
 	}
 }

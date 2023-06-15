@@ -1,92 +1,70 @@
 package com.enzulode.server.configuration;
 
+import com.enzulode.common.dao.TicketDao;
+import com.enzulode.common.execution.ExecutionService;
 import com.enzulode.common.filesystem.FileManipulationService;
+import com.enzulode.common.resolution.CommandFactory;
+import com.enzulode.common.resolution.ResolutionService;
 import com.enzulode.common.resolution.ResolutionServiceImpl;
-import com.enzulode.models.util.LocalDateTimeAdapter;
+import com.enzulode.models.Ticket;
 import com.enzulode.network.UDPSocketServer;
 import com.enzulode.network.exception.NetworkException;
-import com.enzulode.server.dao.TicketDaoImpl;
-import com.enzulode.server.database.TicketDatabaseImpl;
+import com.enzulode.network.handling.RequestHandler;
+import com.enzulode.server.cli.resolution.ServerCommandFactory;
 import com.enzulode.server.execution.ExecutionServiceImpl;
+import com.enzulode.server.handling.DefaultApplicationRequestHandlerImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-
+/**
+ * Application configuration
+ *
+ */
 @Configuration
 @Slf4j
 public class ServerConfiguration
 {
+	/**
+	 * File manipulation service bean declaration
+	 *
+	 * @return file manipulation service instance
+	 */
 	@Bean(name = "fileManipulationService")
 	public FileManipulationService fileManipulationServiceBean()
 	{
 		return new FileManipulationService();
 	}
 
-	@Bean(name = "localDateTimeAdapter")
-	public LocalDateTimeAdapter localDateTimeAdapterBean()
+	/**
+	 * Command factory bean declaration
+	 *
+	 * @return command factory instance
+	 */
+	@Bean(name = "commandFactory")
+	public CommandFactory<Ticket> commandFactoryBean()
 	{
-		return new LocalDateTimeAdapter();
+		return new ServerCommandFactory();
 	}
 
-	@Bean(name = "jaxbContext")
-	public JAXBContext jaxbContextBean()
-	{
-		try
-		{
-			return JAXBContext.newInstance(TicketDatabaseImpl.class);
-		}
-		catch (JAXBException e)
-		{
-			log.error("Failed to create jaxb context");
-			throw new BeanCreationException("jaxbContext", "Failed to create jaxb context", e);
-		}
-	}
-
-	@Bean(name = "jaxbMarshaller")
-	public Marshaller jaxbMarshallerBean(JAXBContext context, LocalDateTimeAdapter adapter)
-	{
-		try
-		{
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			marshaller.setAdapter(adapter);
-			return context.createMarshaller();
-		}
-		catch (JAXBException e)
-		{
-			log.error("Failed to create jaxb marshaller");
-			throw new BeanCreationException("jaxbMarshaller", "Failed to create jaxb marshaller", e);
-		}
-	}
-
-	@Bean(name = "jaxbUnmarshaller")
-	public Unmarshaller jaxbUnmarshallerBean(JAXBContext context, LocalDateTimeAdapter adapter)
-	{
-		try
-		{
-			Unmarshaller unmarshaller = context.createUnmarshaller();
-			unmarshaller.setAdapter(adapter);
-			return unmarshaller;
-		}
-		catch (JAXBException e)
-		{
-			log.error("Failed to create jaxb unmarshaller");
-			throw new BeanCreationException("jaxbUnmarshaller", "Failed to create jaxb unmarshaller", e);
-		}
-	}
-
+	/**
+	 * Command resolution service bean declaration
+	 *
+	 * @param commandFactory command factory instance
+	 * @return command resolution service implementation
+	 */
 	@Bean(name = "commandResolutionService")
-	public ResolutionServiceImpl commandResolutionServiceBean()
+	public ResolutionService commandResolutionServiceBean(CommandFactory<Ticket> commandFactory)
 	{
-		return new ResolutionServiceImpl();
+		return new ResolutionServiceImpl(commandFactory);
 	}
 
+	/**
+	 * UDP Server bean declaration
+	 *
+	 * @return udp server bean declaration
+	 */
 	@Bean(name = "udpSocketServer")
 	public UDPSocketServer udpServerBean()
 	{
@@ -101,9 +79,34 @@ public class ServerConfiguration
 		}
 	}
 
+	/**
+	 * Execution service bean declaration
+	 *
+	 * @param dao ticket dao instance
+	 * @param fms file manipulation service instance
+	 * @return execution service instance
+	 */
 	@Bean(name = "executionServiceImpl")
-	public ExecutionServiceImpl executionServiceImplBean(TicketDaoImpl dao, FileManipulationService fms)
+	public ExecutionService<Ticket> executionServiceImplBean(TicketDao dao, FileManipulationService fms)
 	{
 		return new ExecutionServiceImpl(dao, fms);
+	}
+
+	/**
+	 * Request handler bean declaration
+	 *
+	 * @param dao ticket dao instance
+	 * @param resolutionService command resolution service instance
+	 * @param executionService command execution service instance
+	 * @return request handler instance
+	 */
+	@Bean(name = "applicationRequestHandler")
+	public RequestHandler applicationRequestHandlerBean(
+			TicketDao dao,
+			ResolutionService resolutionService,
+			ExecutionService<Ticket> executionService
+	)
+	{
+		return new DefaultApplicationRequestHandlerImpl(dao, resolutionService, executionService);
 	}
 }
