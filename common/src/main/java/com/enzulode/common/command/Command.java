@@ -1,16 +1,13 @@
 package com.enzulode.common.command;
 
 import com.enzulode.common.command.util.ExecutionResult;
-import com.enzulode.common.dao.Dao;
+import com.enzulode.common.dao.TicketDao;
 import com.enzulode.common.execution.ExecutionService;
 import com.enzulode.common.filesystem.FileManipulationService;
 import com.enzulode.common.resolution.ResolutionService;
 import lombok.*;
 
-import java.io.Externalizable;
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
+import java.io.*;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,11 +17,14 @@ import java.util.List;
 @Getter
 public abstract class Command<T> implements Externalizable
 {
+	@Serial
+	private static final long serialVersionUID = -6810630369479732525L;
+
 	private final int argsExpected;
 
 	protected List<String> args;
 
-	protected Dao<T> dao;
+	protected TicketDao ticketDao;
 	protected ExecutionService<T> executionService;
 	protected ResolutionService resolutionService;
 	protected FileManipulationService fms;
