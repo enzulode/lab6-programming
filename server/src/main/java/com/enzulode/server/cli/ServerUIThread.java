@@ -2,7 +2,6 @@ package com.enzulode.server.ui;
 
 import com.enzulode.common.command.Command;
 import com.enzulode.common.command.impl.ExitCommand;
-import com.enzulode.common.command.impl.SaveCommand;
 import com.enzulode.common.execution.ExecutionService;
 import com.enzulode.common.resolution.ResolutionService;
 import com.enzulode.common.resolution.exception.CommandResolutionException;
@@ -81,7 +80,7 @@ public class ServerUIThread extends Thread
 					{
 						Command<Ticket> command = resolutionService.resolveCommand(cliReader.readLine());
 
-						if (!(command instanceof SaveCommand || command instanceof ExitCommand))
+						if (!(command instanceof ExitCommand))
 						{
 							logger.warn("This command is not supported on the server side");
 							continue;
