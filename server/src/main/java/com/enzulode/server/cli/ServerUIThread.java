@@ -1,4 +1,4 @@
-package com.enzulode.server.ui;
+package com.enzulode.server.cli;
 
 import com.enzulode.common.command.Command;
 import com.enzulode.common.command.impl.ExitCommand;
@@ -71,34 +71,32 @@ public class ServerUIThread extends Thread
 	@Override
 	public void run()
 	{
-
 		while (true)
+		{
+			try
 			{
-				try
+				if (cliReader.ready())
 				{
-					if (cliReader.ready())
+					Command<Ticket> command = resolutionService.resolveCommand(cliReader.readLine());
+
+					if (!(command instanceof ExitCommand))
 					{
-						Command<Ticket> command = resolutionService.resolveCommand(cliReader.readLine());
-
-						if (!(command instanceof ExitCommand))
-						{
-							logger.warn("This command is not supported on the server side");
-							continue;
-						}
-
-						logger.info("Got command from server console: " + command.getClass().getSimpleName());
-						logger.info(executionService.execute(command).getMessage());
+						logger.warn("This command is not supported on the server side");
+						continue;
 					}
-				}
-				catch (CommandResolutionException e)
-				{
-					logger.warn("Such command does not exist");
-				}
-				catch (IOException e)
-				{
-					logger.error("Something went wrong with stdin on the server side", e);
+
+					logger.info("Got command from server console: " + command.getClass().getSimpleName());
+					logger.info(executionService.execute(command).getMessage());
 				}
 			}
-
+			catch (CommandResolutionException e)
+			{
+				logger.warn("Such command does not exist");
+			}
+			catch (IOException e)
+			{
+				logger.error("Something went wrong with stdin on the server side", e);
+			}
+		}
 	}
 }
