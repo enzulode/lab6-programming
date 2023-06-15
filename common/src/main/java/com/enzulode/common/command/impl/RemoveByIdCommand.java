@@ -27,7 +27,7 @@ public class RemoveByIdCommand extends SimpleTicketCommand
 			if (idToRemove == null)
 				return new ExecutionResult(ExecutionStatus.FAILED, "Invalid command argument provided");
 
-			dao.remove(idToRemove);
+			ticketDao.delete(idToRemove);
 			return new ExecutionResult(ExecutionStatus.SUCCEED, "Successfully removed element");
 		}
 		catch (DaoException e)

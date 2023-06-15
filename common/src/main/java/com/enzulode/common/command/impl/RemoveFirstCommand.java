@@ -21,7 +21,7 @@ public class RemoveFirstCommand extends SimpleTicketCommand
 	{
 		try
 		{
-			dao.removeFirst();
+			ticketDao.removeFirst();
 			return new ExecutionResult(ExecutionStatus.SUCCEED, "Successfully removed first element");
 		}
 		catch (DaoException e)

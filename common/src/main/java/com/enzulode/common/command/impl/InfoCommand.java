@@ -3,6 +3,7 @@ package com.enzulode.common.command.impl;
 import com.enzulode.common.command.SimpleTicketCommand;
 import com.enzulode.common.command.util.ExecutionResult;
 import com.enzulode.common.command.util.ExecutionStatus;
+import com.enzulode.common.dao.exception.DaoException;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -18,9 +19,16 @@ public class InfoCommand extends SimpleTicketCommand
 	@Override
 	public ExecutionResult execute()
 	{
-		return new ExecutionResult(ExecutionStatus.SUCCEED)
+		try
+		{
+			return new ExecutionResult(ExecutionStatus.SUCCEED)
 				.append("Type: ArrayList collection")
-				.append("Init date: " + dao.getCreationDate())
-				.append("Stored elements amount: " + dao.size());
+				.append("Init date: " + ticketDao.getCreationDate())
+				.append("Stored elements amount: " + ticketDao.size());
+		}
+		catch (DaoException e)
+		{
+			return new ExecutionResult(ExecutionStatus.FAILED, "Failed to retrieve database metadata");
+		}
 	}
 }

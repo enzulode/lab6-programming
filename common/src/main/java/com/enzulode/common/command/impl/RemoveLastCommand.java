@@ -21,7 +21,7 @@ public class RemoveLastCommand extends SimpleTicketCommand
 	{
 		try
 		{
-			dao.removeLast();
+			ticketDao.removeLast();
 			return new ExecutionResult(ExecutionStatus.SUCCEED, "Successfully removed last element");
 		}
 		catch (DaoException e)

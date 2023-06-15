@@ -27,7 +27,7 @@ public class RemoveAnyByRefundableCommand extends SimpleTicketCommand
 			if (refundable == null)
 				return new ExecutionResult(ExecutionStatus.FAILED, "Incorrect command argument");
 
-			dao.removeAnyByRefundable(refundable);
+			ticketDao.removeAnyByRefundable(refundable);
 			return new ExecutionResult(ExecutionStatus.SUCCEED, "Successfully removed");
 		}
 		catch (DaoException e)

@@ -3,6 +3,7 @@ package com.enzulode.common.command.impl;
 import com.enzulode.common.command.SimpleTicketCommand;
 import com.enzulode.common.command.util.ExecutionResult;
 import com.enzulode.common.command.util.ExecutionStatus;
+import com.enzulode.common.dao.exception.DaoException;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -18,7 +19,14 @@ public class ClearCommand extends SimpleTicketCommand
 	@Override
 	public ExecutionResult execute()
 	{
-		dao.clear();
-		return new ExecutionResult(ExecutionStatus.SUCCEED, "The database successfully cleared");
+		try
+		{
+			ticketDao.clear();
+			return new ExecutionResult(ExecutionStatus.SUCCEED, "The database successfully cleared");
+		}
+		catch (DaoException e)
+		{
+			return new ExecutionResult(ExecutionStatus.FAILED, e.getMessage());
+		}
 	}
 }

@@ -3,6 +3,7 @@ package com.enzulode.common.command.impl;
 import com.enzulode.common.command.SimpleTicketCommand;
 import com.enzulode.common.command.util.ExecutionResult;
 import com.enzulode.common.command.util.ExecutionStatus;
+import com.enzulode.common.dao.exception.DaoException;
 import com.enzulode.models.Ticket;
 import lombok.NoArgsConstructor;
 
@@ -25,12 +26,19 @@ public class ShowCommand extends SimpleTicketCommand
 
 		ExecutionResult result = new ExecutionResult(ExecutionStatus.SUCCEED);
 
-		List<Ticket> tickets = dao.findAll();
-		if (tickets.size() == 0)
-			return new ExecutionResult(ExecutionStatus.SUCCEED, "No elements found");
+		try
+		{
+			List<Ticket> tickets = ticketDao.findAll();
+			if (tickets.size() == 0)
+				return new ExecutionResult(ExecutionStatus.SUCCEED, "No elements found");
 
-		tickets.forEach((el) -> result.append(el.toString()));
+			tickets.forEach((el) -> result.append(el.toString()));
 
-		return result;
+			return result;
+		}
+		catch (DaoException e)
+		{
+			return new ExecutionResult(ExecutionStatus.FAILED, "Failed to show all elements");
+		}
 	}
 }

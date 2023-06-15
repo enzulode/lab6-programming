@@ -32,7 +32,7 @@ public class UpdateCommand extends ElementTicketCommand
 			if (updatedId == null)
 				return new ExecutionResult(ExecutionStatus.FAILED, "Id should be an integer");
 
-			dao.update(updatedId, element);
+			ticketDao.update(updatedId, element);
 			return new ExecutionResult(ExecutionStatus.SUCCEED, "Element successfully updated");
 		}
 		catch (ParsingException | DaoException e)

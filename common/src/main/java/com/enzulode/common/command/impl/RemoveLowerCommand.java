@@ -24,7 +24,7 @@ public class RemoveLowerCommand extends ElementTicketCommand
 
 		try
 		{
-			dao.removeLower(element);
+			ticketDao.removeLower(element);
 			return new ExecutionResult(ExecutionStatus.SUCCEED, "Successfully removed element");
 		}
 		catch (DaoException e)

@@ -30,7 +30,7 @@ public class FilterLessThanTypeCommand extends SimpleTicketCommand
 						.append("You should use a correct ticket type as a command argument");
 
 			ExecutionResult result = new ExecutionResult(ExecutionStatus.SUCCEED);
-			dao.findLessThanType(type).forEach((el) -> result.append(el.toString()));
+			ticketDao.findLessThanType(type).forEach((el) -> result.append(el.toString()));
 			return result;
 		}
 		catch (ParsingException e)

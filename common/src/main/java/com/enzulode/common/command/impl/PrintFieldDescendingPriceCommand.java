@@ -3,6 +3,7 @@ package com.enzulode.common.command.impl;
 import com.enzulode.common.command.SimpleTicketCommand;
 import com.enzulode.common.command.util.ExecutionResult;
 import com.enzulode.common.command.util.ExecutionStatus;
+import com.enzulode.common.dao.exception.DaoException;
 import com.enzulode.models.Ticket;
 import lombok.NoArgsConstructor;
 
@@ -19,13 +20,22 @@ public class PrintFieldDescendingPriceCommand extends SimpleTicketCommand
 	@Override
 	public ExecutionResult execute()
 	{
-		List<Float> prices = dao.findAll().stream()
-				.map(Ticket::getPrice)
-				.sorted((el1, el2) -> Float.compare(el2, el1))
-				.toList();
+		try
+		{
+			List<Float> prices = ticketDao
+					.findAll()
+					.stream()
+					.map(Ticket::getPrice)
+					.sorted((el1, el2) -> Float.compare(el2, el1))
+					.toList();
 
-		ExecutionResult result = new ExecutionResult(ExecutionStatus.SUCCEED);
-		prices.forEach((price) -> result.append(price.toString()));
-		return result;
+			ExecutionResult result = new ExecutionResult(ExecutionStatus.SUCCEED);
+			prices.forEach((price) -> result.append(price.toString()));
+			return result;
+		}
+		catch (DaoException e)
+		{
+			return new ExecutionResult(ExecutionStatus.FAILED, "Failed to perform operation");
+		}
 	}
 }

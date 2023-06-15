@@ -24,7 +24,7 @@ public class AddCommand extends ElementTicketCommand
 
 		try
 		{
-			dao.add(element);
+			ticketDao.create(element);
 			return new ExecutionResult(ExecutionStatus.SUCCEED, "Element successfully added");
 		}
 		catch (DaoException e)
