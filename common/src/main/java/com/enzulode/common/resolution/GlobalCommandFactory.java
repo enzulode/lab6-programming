@@ -1,8 +1,7 @@
-package com.enzulode.client.resolution;
+package com.enzulode.common.resolution;
 
 import com.enzulode.common.command.Command;
 import com.enzulode.common.command.impl.*;
-import com.enzulode.common.resolution.CommandFactory;
 import com.enzulode.common.resolution.exception.CommandResolutionException;
 import com.enzulode.models.Ticket;
 import lombok.NonNull;
@@ -13,7 +12,7 @@ import java.util.List;
  * Command instance factory
  *
  */
-public class ClientCommandFactory implements CommandFactory<Ticket>
+public class GlobalCommandFactory implements CommandFactory<Ticket>
 {
 	/**
 	 * Command instance factory method
