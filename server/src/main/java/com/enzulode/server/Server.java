@@ -1,22 +1,14 @@
 package com.enzulode.server;
 
-import com.enzulode.common.execution.ExecutionService;
-import com.enzulode.common.resolution.ResolutionService;
-import com.enzulode.common.resolution.ResolutionServiceImpl;
-import com.enzulode.models.Ticket;
 import com.enzulode.network.UDPSocketServer;
 import com.enzulode.network.exception.NetworkException;
 import com.enzulode.network.handling.RequestHandler;
-import com.enzulode.server.cli.ServerUIThread;
-import com.enzulode.server.execution.ExecutionServiceImpl;
+import com.enzulode.server.cli.factory.ServerCLIThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import sun.misc.Signal;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 @SpringBootApplication
 @Slf4j
@@ -30,11 +22,6 @@ public class Server
 
 		UDPSocketServer server = context.getBean(UDPSocketServer.class);
 		log.info("UPDServer successfully started at port: " + server.getServerAddress().getPort());
-
-//		Prepare instances to handle commands from server command line
-		BufferedReader cliReader = new BufferedReader(new InputStreamReader(System.in));
-		ResolutionService resolutionService = context.getBean(ResolutionServiceImpl.class);
-		ExecutionService<Ticket> executionService = context.getBean(ExecutionServiceImpl.class);
 
 //		Registered signal handler
 	    Signal.handle(
@@ -51,7 +38,8 @@ public class Server
 		server.subscribe(handler);
 
 //		Starting server ui thread
-		(new ServerUIThread(cliReader, resolutionService, executionService, log)).start();
+		var serverCLIFactory = context.getBean(ServerCLIThreadFactory.class);
+		serverCLIFactory.newServerCLIThread().start();
 
 //		Handling the request
 		try
