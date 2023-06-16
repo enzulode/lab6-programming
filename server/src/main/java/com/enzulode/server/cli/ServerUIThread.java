@@ -6,7 +6,7 @@ import com.enzulode.common.execution.ExecutionService;
 import com.enzulode.common.resolution.ResolutionService;
 import com.enzulode.common.resolution.exception.CommandResolutionException;
 import com.enzulode.models.Ticket;
-import org.slf4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,6 +15,7 @@ import java.io.IOException;
  * Server-side ui thread
  *
  */
+@Slf4j
 public class ServerUIThread extends Thread
 {
 	/**
@@ -22,12 +23,6 @@ public class ServerUIThread extends Thread
 	 *
 	 */
 	private final BufferedReader cliReader;
-
-	/**
-	 * Logger instance
-	 *
-	 */
-	private final Logger logger;
 
 	/**
 	 * Command resolution service
@@ -47,13 +42,11 @@ public class ServerUIThread extends Thread
 	 * @param cliReader console reader instance
 	 * @param resolutionService resolution service instance
 	 * @param executionService execution service instance
-	 * @param logger logger instance
 	 */
 	public ServerUIThread(
 			BufferedReader cliReader,
 			ResolutionService resolutionService,
-			ExecutionService<Ticket> executionService,
-			Logger logger
+			ExecutionService<Ticket> executionService
 	)
 	{
 		super("server-ui-thread");
@@ -61,7 +54,6 @@ public class ServerUIThread extends Thread
 		this.cliReader = cliReader;
 		this.resolutionService = resolutionService;
 		this.executionService = executionService;
-		this.logger = logger;
 	}
 
 	/**
@@ -81,21 +73,21 @@ public class ServerUIThread extends Thread
 
 					if (!(command instanceof ExitCommand))
 					{
-						logger.warn("This command is not supported on the server side");
+						log.warn("This command is not supported on the server side");
 						continue;
 					}
 
-					logger.info("Got command from server console: " + command.getClass().getSimpleName());
-					logger.info(executionService.execute(command).getMessage());
+					log.info("Got command from server console: " + command.getClass().getSimpleName());
+					log.info(executionService.execute(command).getMessage());
 				}
 			}
 			catch (CommandResolutionException e)
 			{
-				logger.warn("Such command does not exist");
+				log.warn("Such command does not exist");
 			}
 			catch (IOException e)
 			{
-				logger.error("Something went wrong with stdin on the server side", e);
+				log.error("Something went wrong with stdin on the server side", e);
 			}
 		}
 	}
