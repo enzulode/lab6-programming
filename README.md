@@ -1,6 +1,6 @@
-## Lab6
+## Lab7
 ```Andreev Vladislav```
-##### Task id: ```31271```
+##### Task id: ```432381```
 
 ## Task
 <a href="docs/task">Task screenshots available here</a>
