@@ -11,6 +11,7 @@ group = 'com.enzulode.server'
 dependencies {
     implementation project(':common')
     implementation project(':model')
+	implementation project(':network')
 
     implementation 'org.springframework.boot:spring-boot-starter'
 
