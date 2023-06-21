@@ -1,0 +1,6 @@
+version = '1.0.0'
+group = 'com.enzulode.network'
+
+dependencies {
+	implementation 'org.apache.commons:commons-lang3:3.12.0'
+}
