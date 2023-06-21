@@ -3,14 +3,15 @@ package com.enzulode.server.configuration;
 import com.enzulode.common.dao.TicketDao;
 import com.enzulode.common.execution.ExecutionService;
 import com.enzulode.common.filesystem.FileManipulationService;
-import com.enzulode.common.resolution.GlobalCommandFactory;
 import com.enzulode.common.resolution.CommandFactory;
+import com.enzulode.common.resolution.GlobalCommandFactory;
 import com.enzulode.common.resolution.ResolutionService;
 import com.enzulode.common.resolution.ResolutionServiceImpl;
 import com.enzulode.models.Ticket;
-import com.enzulode.network.UDPSocketServer;
+import com.enzulode.network.UDPServer;
+import com.enzulode.network.UDPSocketServerImpl;
 import com.enzulode.network.exception.NetworkException;
-import com.enzulode.network.handling.RequestHandler;
+import com.enzulode.network.handle.RequestHandler;
 import com.enzulode.server.cli.factory.DefaultServerCLIThreadFactoryImpl;
 import com.enzulode.server.cli.factory.ServerCLIThreadFactory;
 import com.enzulode.server.cli.resolution.ServerCommandFactory;
@@ -24,6 +25,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
 
 /**
  * Application configuration
@@ -100,11 +102,11 @@ public class ServerConfiguration
 	 * @return udp server bean declaration
 	 */
 	@Bean(name = "udpSocketServer")
-	public UDPSocketServer udpServerBean()
+	public UDPServer udpServerBean()
 	{
 		try
 		{
-			return new UDPSocketServer();
+			return new UDPSocketServerImpl(new InetSocketAddress("127.0.0.1", 8080));
 		}
 		catch (NetworkException e)
 		{
