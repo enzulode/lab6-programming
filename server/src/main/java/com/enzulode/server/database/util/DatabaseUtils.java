@@ -57,7 +57,9 @@ public class DatabaseUtils
 					long venueId = selectResult.getLong("venue_id");
 					String venueName = selectResult.getString("venue_name");
 					int venueCapacity = selectResult.getInt("venue_capacity");
-					VenueType venueType = TypesParser.parseVenueType(selectResult.getString("venue_type"));
+					VenueType venueType = (selectResult.getString("venue_type") == null)
+							? null
+							: TypesParser.parseVenueType(selectResult.getString("venue_type"));
 					var venue = new Venue(venueId, venueName, venueCapacity, venueType);
 
 //					Retrieve ticket from result set
@@ -69,7 +71,9 @@ public class DatabaseUtils
 					float ticketPrice = selectResult.getFloat("ticket_price");
 					String ticketComment = selectResult.getString("ticket_comment");
 					boolean ticketRefundable = selectResult.getBoolean("ticket_refundable");
-					TicketType ticketType = TypesParser.parseTicketType(selectResult.getString("ticket_type"));
+					TicketType ticketType = (selectResult.getString("ticket_type") == null)
+							? null
+							: TypesParser.parseTicketType(selectResult.getString("ticket_type"));
 
 					var ticket = new Ticket(
 							ticketId,
