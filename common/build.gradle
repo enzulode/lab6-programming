@@ -3,5 +3,6 @@ group = 'com.enzulode.common'
 
 dependencies {
     implementation project(':model')
+    implementation project(':network')
     implementation 'org.apache.commons:commons-lang3:3.12.0'
 }
