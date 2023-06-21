@@ -9,25 +9,12 @@ allprojects {
 
 	Properties properties = new Properties()
 	properties.load(project.rootProject.file('local.properties').newDataInputStream())
-	def gitUsername = properties.getProperty("gpr.user")
-	def gitToken = properties.getProperty("gpr.key")
 
 	repositories {
 		mavenCentral()
-
-		repositories {
-			maven {
-				url = uri("https://maven.pkg.github.com/enzulode/networking-library")
-				credentials {
-					username = gitUsername
-					password = gitToken
-				}
-			}
-		}
 	}
 
 	dependencies {
-
 		compileOnly 'org.projectlombok:lombok:1.18.26'
 		annotationProcessor 'org.projectlombok:lombok:1.18.26'
 
@@ -36,8 +23,6 @@ allprojects {
 
 		testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
 		testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
-
-		implementation 'com.enzulode:networking-library:1.7.0'
 	}
 }
 

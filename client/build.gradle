@@ -4,6 +4,7 @@ group = 'com.enzulode.client'
 dependencies {
     implementation project(':common')
     implementation project(':model')
+    implementation project(':network')
 }
 
 jar {

@@ -14,10 +14,11 @@ import com.enzulode.common.parser.TypesParser;
 import com.enzulode.common.parser.exception.ParsingException;
 import com.enzulode.common.resolution.ResolutionService;
 import com.enzulode.models.Ticket;
-import com.enzulode.network.UDPChannelClient;
+import com.enzulode.network.UDPChannelClientImpl;
+import com.enzulode.network.UDPClient;
 import com.enzulode.network.exception.NetworkException;
 import com.enzulode.network.exception.ServerNotAvailableException;
-import com.enzulode.network.model.interconnection.util.ResponseCode;
+import com.enzulode.network.model.interconnection.response.ResponseCode;
 import lombok.RequiredArgsConstructor;
 import sun.misc.Signal;
 
@@ -60,34 +61,21 @@ public class Console
      */
     public void run()
     {
-//		Registered signal handler
-	    Signal.handle(new Signal("INT"), (signal) -> {
-			printer.println("Caught an interruption signal: CTRL + C was pressed");
-			printer.println("Client application shutdown initiated");
-			System.exit(0);
-	    });
+		registerSignalHandler();
 
 //		Starting client application server
-		try(UDPChannelClient client = new UDPChannelClient())
+		try(UDPClient client = new UDPChannelClientImpl())
 		{
 //			User loop
 			while (true)
 			{
-	            printer.print("Enter command: ");
 
-//				Handle 'End of input stream' and turn the application off (CTRL + D)
-	            if (!scanner.hasNextLine())
-				{
-	                printer.println("Input stream ended");
-					printer.println("Application shutdown initiated");
-	                System.exit(0);
-	            }
-
-	            String line = scanner.nextLine();
+				showEntryMessageAnCheckInputIsValid();
 
 	            try
 	            {
-//					Resolve command
+//					Assume user input and resolve command
+					String line = scanner.nextLine();
 	                Command<Ticket> command = resolutionService.resolveCommand(line);
 
 					if (command instanceof ExitCommand)
@@ -105,7 +93,7 @@ public class Console
 						IdRequest request = new IdRequest(id);
 						IdResponse response = client.sendRequestAndWaitResponse(request);
 
-						if (response.getCode() != ResponseCode.SUCCEED)
+						if (response.getResponseCode() != ResponseCode.SUCCEED)
 						{
 							printer.println(response.getMessage());
 							continue;
@@ -135,4 +123,34 @@ public class Console
 			printer.println(e.getMessage());
 		}
     }
+
+	/**
+	 * This method registers a CTRL-C signal handler
+	 *
+	 */
+	private void registerSignalHandler()
+	{
+	    Signal.handle(new Signal("INT"), (signal) -> {
+			printer.println("Caught an interruption signal: CTRL + C was pressed");
+			printer.println("Client application shutdown initiated");
+			System.exit(0);
+	    });
+	}
+
+	/**
+	 * This method shows a welcome message for user and checks if the user input ended
+	 *
+	 */
+	private void showEntryMessageAnCheckInputIsValid()
+	{
+		printer.print("Enter command: ");
+
+//		Handle 'End of input stream' and turn the application off (CTRL + D)
+		if (!scanner.hasNextLine())
+		{
+			printer.println("Input stream ended");
+			printer.println("Application shutdown initiated");
+			System.exit(0);
+		}
+	}
 }
