@@ -1,8 +1,8 @@
 package com.enzulode.server;
 
-import com.enzulode.network.UDPSocketServer;
+import com.enzulode.network.UDPServer;
 import com.enzulode.network.exception.NetworkException;
-import com.enzulode.network.handling.RequestHandler;
+import com.enzulode.network.handle.RequestHandler;
 import com.enzulode.server.cli.factory.ServerCLIThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -20,8 +20,8 @@ public class Server
 		ApplicationContext context = SpringApplication.run(Server.class, args);
 		log.info("Application context successfully initialized");
 
-		UDPSocketServer server = context.getBean(UDPSocketServer.class);
-		log.info("UPDServer successfully started at port: " + server.getServerAddress().getPort());
+		UDPServer server = context.getBean(UDPServer.class);
+		log.info("UPD server successfully started");
 
 //		Registered signal handler
 	    Signal.handle(
@@ -44,7 +44,7 @@ public class Server
 //		Handling the request
 		try
 		{
-			server.handleIncomingRequests();
+			server.start();
 		}
 		catch (NetworkException e)
 		{
