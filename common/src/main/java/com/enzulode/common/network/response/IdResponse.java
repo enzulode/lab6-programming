@@ -1,8 +1,9 @@
 package com.enzulode.common.network.response;
 
-import com.enzulode.network.model.interconnection.Response;
-import com.enzulode.network.model.interconnection.util.ResponseCode;
+import com.enzulode.network.model.interconnection.response.Response;
+import com.enzulode.network.model.interconnection.response.ResponseCode;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.io.Serial;
 
@@ -31,7 +32,7 @@ public class IdResponse extends Response
 	 *
 	 * @param code response code
 	 */
-	public IdResponse(ResponseCode code, String message)
+	public IdResponse(@NonNull ResponseCode code, @NonNull String message)
 	{
 		super(code);
 		this.message = message;

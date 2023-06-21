@@ -3,12 +3,12 @@ package com.enzulode.common.network.request;
 import com.enzulode.common.command.Command;
 import com.enzulode.common.command.SimpleTicketCommand;
 import com.enzulode.models.Ticket;
-import com.enzulode.network.model.interconnection.Request;
+import com.enzulode.network.model.interconnection.request.Request;
 import lombok.Getter;
 import lombok.NonNull;
 
 import java.io.Serial;
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 /**
  * This class represents command request
@@ -48,8 +48,8 @@ public class CommandRequest extends Request
 	 * @param command command to be executed
 	 */
 	public CommandRequest(
-			@NonNull InetSocketAddress from,
-			@NonNull InetSocketAddress to,
+			@NonNull SocketAddress from,
+			@NonNull SocketAddress to,
 			@NonNull SimpleTicketCommand command
 	)
 	{

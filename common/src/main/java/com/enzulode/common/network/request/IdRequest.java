@@ -1,6 +1,6 @@
 package com.enzulode.common.network.request;
 
-import com.enzulode.network.model.interconnection.Request;
+import com.enzulode.network.model.interconnection.request.Request;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

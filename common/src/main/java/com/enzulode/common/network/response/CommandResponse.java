@@ -1,13 +1,13 @@
 package com.enzulode.common.network.response;
 
 import com.enzulode.common.command.util.ExecutionResult;
-import com.enzulode.network.model.interconnection.Response;
-import com.enzulode.network.model.interconnection.util.ResponseCode;
+import com.enzulode.network.model.interconnection.response.Response;
+import com.enzulode.network.model.interconnection.response.ResponseCode;
 import lombok.Getter;
 import lombok.NonNull;
 
 import java.io.Serial;
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 /**
  * This class represents simple command response
@@ -49,13 +49,13 @@ public final class CommandResponse extends Response
 	 * @param result command execution result
 	 */
 	public CommandResponse(
-			@NonNull InetSocketAddress from,
-			@NonNull InetSocketAddress to,
+			@NonNull SocketAddress from,
+			@NonNull SocketAddress to,
 			@NonNull ResponseCode code,
 			@NonNull ExecutionResult result
 	)
 	{
-		super(from, to, code);
+		super(code, from, to);
 		this.result = result;
 	}
 }
